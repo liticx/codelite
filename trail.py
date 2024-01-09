@@ -2,7 +2,7 @@ import requests
 import json
 
 API_KEY = input("Please enter your API key: ")
-BASE_URL = "http://localhost:3000/api/completions"
+BASE_URL = "https://codelite-five.vercel.app/api/completion"
 
 def chat_with_bot(message, model="gpt-4", temperature=0.7):
     headers = {

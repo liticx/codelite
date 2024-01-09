@@ -1,8 +1,4 @@
-const express = require('express');
 const axios = require('axios');
-const app = express();
-
-app.use(express.json());
 
 let tokenInfo = {
   value: null,
@@ -80,35 +76,32 @@ async function openaiAgentTest(messages, model = "gpt-4", temperature = 0.7) {
   }
 }
 
-app.post('/', async (req, res) => {
-  const apiKey = req.headers['api-key'];
+exports.handler = async function(event, context) {
+  const data = JSON.parse(event.body);
+  const apiKey = event.headers['api-key'];
+
   if (!apiKey || !apiKeys[apiKey]) {
-    return res.status(403).send('Invalid API Key.');
+    return { statusCode: 403, body: 'Invalid API Key.' };
   }
 
   if (apiKeys[apiKey].count >= apiKeys[apiKey].limit) {
-    return res.status(429).send('API Key usage limit exceeded.');
+    return { statusCode: 429, body: 'API Key usage limit exceeded.' };
   }
 
   try {
-    const { messages, model, temperature } = req.body;
-    // Append the new message to the conversation history
+    const { messages, model, temperature } = data;
     apiKeys[apiKey].messages.push(...messages);
     const result = await openaiAgentTest(apiKeys[apiKey].messages, model, temperature);
 
-    // increment the usage count for the API key
     apiKeys[apiKey].count++;
 
     if (result.error) {
-      return res.status(500).send(result.error);
+      return { statusCode: 500, body: result.error };
     }
 
-    res.send(result);
+    return { statusCode: 200, body: JSON.stringify(result) };
   } catch (error) {
     console.error(error);
-    res.status(500).send('An error occurred while processing your request.');
+    return { statusCode: 500, body: 'An error occurred while processing your request.' };
   }
-});
-
-
-module.exports = app;
+};
