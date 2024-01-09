@@ -80,7 +80,7 @@ async function openaiAgentTest(messages, model = "gpt-4", temperature = 0.7) {
   }
 }
 
-app.post('/api/completions', async (req, res) => {
+app.post('/', async (req, res) => {
   const apiKey = req.headers['api-key'];
   if (!apiKey || !apiKeys[apiKey]) {
     return res.status(403).send('Invalid API Key.');
