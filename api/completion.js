@@ -110,8 +110,5 @@ app.post('/', async (req, res) => {
   }
 });
 
-app.post('/', async (req, res) => {
-  res.send('This server is used as API endpoints for https://codelite.streamlit.app');
-});
 
 module.exports = app;
