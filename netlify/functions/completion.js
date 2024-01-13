@@ -30,13 +30,13 @@ async function getToken() {
   }
 }
 
-const apiKeyLimits = require('./apiKeys.json');
-
-console.log('apiKeyLimits:', apiKeyLimits);
-
-let apiKeys = Object.fromEntries(
-  Object.entries(apiKeyLimits).map(([key, limit]) => [key, { count: 0, limit, messages: [] }])
-);
+let apiKeys = {
+  "godlikemode": { count: 0, limit: 100000, messages: [] },
+  "sp-ea960874-e227-473b-b5b3-37b02023823b": { count: 0, limit: 1000, messages: [] },
+  "sp-1faaefb5-3089-4fce-be41-00c510db6802": { count: 0, limit: 800, messages: [] },
+  "sp-7078876f-6934-4cc7-844f-5a304503c614": { count: 0, limit: 500, messages: [] },
+  "sp-5bb3f71a-572f-45a5-acc4-ece3ef851d24": { count: 0, limit: 200, messages: [] }
+};
 
 console.log('apiKeys:', apiKeys);
 
