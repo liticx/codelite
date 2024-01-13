@@ -30,7 +30,7 @@ async function getToken() {
   }
 }
 
-let OPENAI_API_KEY = {
+let apiKeys = {
   'godlikemode': { count: 0, limit: 100000,  messages: [] },
   'sp-ea960874-e227-473b-b5b3-37b02023823b': { count: 0, limit: 1000,  messages: [] },
   'sp-1faaefb5-3089-4fce-be41-00c510db6802': { count: 0, limit: 800,  messages: [] },
@@ -78,22 +78,22 @@ async function openaiAgentTest(messages, model = "gpt-4", temperature = 0.7) {
 
 exports.handler = async function(event, context) {
   const data = JSON.parse(event.body);
-  const apiKey = event.headers['api-key'];
+  const apiKey = event.headers['OPENAI_API_KEY'];
 
-  if (!apiKey || !OPENAI_API_KEY[apiKey]) {
+  if (!apiKey || !apiKeys[apiKey]) {
     return { statusCode: 403, body: 'Invalid API Key.' };
   }
 
-  if (OPENAI_API_KEY[apiKey].count >= OPENAI_API_KEY[apiKey].limit) {
+  if (apiKeys[apiKey].count >= apiKeys[apiKey].limit) {
     return { statusCode: 429, body: 'API Key usage limit exceeded.' };
   }
 
   try {
     const { messages, model, temperature } = data;
-    OPENAI_API_KEY[apiKey].messages.push(...messages);
-    const result = await openaiAgentTest(OPENAI_API_KEY[apiKey].messages, model, temperature);
+    apiKeys[apiKey].messages.push(...messages);
+    const result = await openaiAgentTest(apiKeys[apiKey].messages, model, temperature);
 
-    OPENAI_API_KEY[apiKey].count++;
+    apiKeys[apiKey].count++;
 
     if (result.error) {
       return { statusCode: 500, body: result.error };
