@@ -2,7 +2,7 @@ const axios = require('axios');
 
 async function makeRequest() {
   try {
-    const response = await axios.get('your_server_url', {
+    const response = await axios.get('https://api-codelite.netlify.app/.netlify/functions/completion', {
       headers: {
         'api-key': 'godlikemode'
       }
