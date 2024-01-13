@@ -30,7 +30,7 @@ async function getToken() {
   }
 }
 
-const apiKeyLimits = require('./functions/apiKeys.json');
+const apiKeyLimits = require('./apiKeys.json');
 
 console.log('apiKeyLimits:', apiKeyLimits);
 
