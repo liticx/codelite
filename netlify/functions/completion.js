@@ -30,11 +30,15 @@ async function getToken() {
   }
 }
 
-const apiKeyLimits = require('./apiKeys.json'); // adjust the path as necessary
+const apiKeyLimits = require('./functions/apiKeys.json');
+
+console.log('apiKeyLimits:', apiKeyLimits);
 
 let apiKeys = Object.fromEntries(
   Object.entries(apiKeyLimits).map(([key, limit]) => [key, { count: 0, limit, messages: [] }])
 );
+
+console.log('apiKeys:', apiKeys);
 
 
 async function openaiAgentTest(messages, model = "gpt-4", temperature = 0.7) {
