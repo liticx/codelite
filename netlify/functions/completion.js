@@ -30,7 +30,6 @@ async function getToken() {
   }
 }
 
-const axios = require('axios');
 const apiKeyLimits = require('./apiKeys.json'); // adjust the path as necessary
 
 let apiKeys = Object.fromEntries(
