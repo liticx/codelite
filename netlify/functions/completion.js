@@ -71,7 +71,7 @@ async function openaiAgentTest(messages, model = "gpt-4", temperature = 0.7) {
       headers: {
         "Editor-Version": "vscode/1.83.0",
         "Authorization": `Bearer ${tokenInfo.value}`,
-        "OPENAI_API_KEY": process.env.OPENAI_API_KEY,
+        "api-key": process.env.OPENAI_API_KEY,
       },
       data: {
         messages,
