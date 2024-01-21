@@ -4,7 +4,7 @@ async function makeRequest() {
   try {
     const response = await axios.get('https://api-codelite.netlify.app/.netlify/functions/completion', {
       headers: {
-        'OPENAI_API_KEY': 'godlikemode'
+        'api-key': 'godlikemode'
       }
     });
 
@@ -95,7 +95,7 @@ async function openaiAgentTest(messages, model = "gpt-4", temperature = 0.7) {
 
 exports.handler = async function(event, context) {
   const data = JSON.parse(event.body);
-  const apiKey = event.headers['OPENAI_API_KEY'];
+  const apiKey = event.headers['api-key'];
 
   if (!apiKey || !apiKeys[apiKey]) {
     return { statusCode: 403, body: 'Invalid API Key.' };
