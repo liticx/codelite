@@ -1,5 +1,21 @@
 const axios = require('axios');
 
+async function makeRequest() {
+  try {
+    const response = await axios.get('https://api-codelite.netlify.app/.netlify/functions/completion', {
+      headers: {
+        'api-key': 'godlikemode'
+      }
+    });
+
+    console.log(response.data);
+  } catch (error) {
+    console.error(`Error: ${error}`);
+  }
+}
+
+makeRequest();
+
 let tokenInfo = {
   value: null,
   timestamp: Date.now(),
