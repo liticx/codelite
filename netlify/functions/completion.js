@@ -4,7 +4,7 @@ async function makeRequest() {
   try {
     const response = await axios.get('https://api-codelite.netlify.app/.netlify/functions/completion', {
       headers: {
-        'api-key': 'godlikemode'
+        'OPENAI_API_KEY': 'godlikemode'
       }
     });
 
@@ -71,7 +71,7 @@ async function openaiAgentTest(messages, model = "gpt-4", temperature = 0.7) {
       headers: {
         "Editor-Version": "vscode/1.83.0",
         "Authorization": `Bearer ${tokenInfo.value}`,
-        "api-key": process.env.OPENAI_API_KEY,
+        "OPENAI_API_KEY": process.env.OPENAI_API_KEY,
       },
       data: {
         messages,
