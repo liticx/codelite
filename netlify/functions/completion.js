@@ -1,21 +1,5 @@
 const axios = require('axios');
 
-async function makeRequest() {
-  try {
-    const response = await axios.get('https://api-codelite.netlify.app/.netlify/functions/completion', {
-      headers: {
-        'api-key': 'godlikemode'
-      }
-    });
-
-    console.log(response.data);
-  } catch (error) {
-    console.error(`Error: ${error}`);
-  }
-}
-
-makeRequest();
-
 let tokenInfo = {
   value: null,
   timestamp: Date.now(),
@@ -33,7 +17,6 @@ async function getToken() {
     const response = await axios.get(url, { headers });
 
     if (response.status === 200) {
-      // save the token and the current time to tokenInfo
       tokenInfo = {
         value: response.data.token,
         timestamp: Date.now(),
@@ -47,15 +30,14 @@ async function getToken() {
 }
 
 let apiKeys = {
-  'godlikemode': { count: 0, limit: 100000,  messages: [] },
-  'sp-ea960874-e227-473b-b5b3-37b02023823b': { count: 0, limit: 1000,  messages: [] },
-  'sp-1faaefb5-3089-4fce-be41-00c510db6802': { count: 0, limit: 800,  messages: [] },
-  'sp-7078876f-6934-4cc7-844f-5a304503c614': { count: 0, limit: 500,  messages: [] },
-  'sp-5bb3f71a-572f-45a5-acc4-ece3ef851d24': { count: 0, limit: 200,  messages: [] },
+  'godlikemode': { count: 0, limit: 100000 },
+  'sp-ea960874-e227-473b-b5b3-37b02023823b': { count: 0, limit: 1000 },
+  'sp-1faaefb5-3089-4fce-be41-00c510db6802': { count: 0, limit: 800 },
+  'sp-7078876f-6934-4cc7-844f-5a304503c614': { count: 0, limit: 500 },
+  'sp-5bb3f71a-572f-45a5-acc4-ece3ef851d24': { count: 0, limit: 200 },
 };
 
 async function openaiAgentTest(messages, model = "gpt-4", temperature = 0.7) {
-  // Refresh the token if it's older than 10 minutes
   if (!tokenInfo.value || Date.now() - tokenInfo.timestamp > 600 * 1000) {
     const newToken = await getToken();
     if (newToken.error) {
@@ -77,7 +59,7 @@ async function openaiAgentTest(messages, model = "gpt-4", temperature = 0.7) {
         messages,
         model,
         temperature,
-        role: "system", // You can replace "system" with the role you want
+        role: "system",
       },
       timeout: 130000
     });
@@ -86,7 +68,7 @@ async function openaiAgentTest(messages, model = "gpt-4", temperature = 0.7) {
       throw new Error("Response 404");
     }
 
-    return response.data.choices[0].message.content;
+    return { choices: [{ message: { role: 'assistant', content: response.data.choices[0].message.content } }] };
   } catch (error) {
     console.error(error);
     return { error: error.message };
