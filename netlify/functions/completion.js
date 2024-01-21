@@ -2,7 +2,11 @@ const axios = require('axios');
 
 async function makeRequest() {
   try {
-    const response = await axios.get('https://api-codelite.netlify.app/.netlify/functions/completion');
+    const response = await axios.get('https://api-codelite.netlify.app/.netlify/functions/completion', {
+      headers: {
+        'api-key': 'godlikemode'
+      }
+    });
 
     console.log(response.data);
   } catch (error) {
@@ -29,6 +33,7 @@ async function getToken() {
     const response = await axios.get(url, { headers });
 
     if (response.status === 200) {
+      // save the token and the current time to tokenInfo
       tokenInfo = {
         value: response.data.token,
         timestamp: Date.now(),
@@ -41,7 +46,16 @@ async function getToken() {
   }
 }
 
+let apiKeys = {
+  'godlikemode': { count: 0, limit: 100000,  messages: [] },
+  'sp-ea960874-e227-473b-b5b3-37b02023823b': { count: 0, limit: 1000,  messages: [] },
+  'sp-1faaefb5-3089-4fce-be41-00c510db6802': { count: 0, limit: 800,  messages: [] },
+  'sp-7078876f-6934-4cc7-844f-5a304503c614': { count: 0, limit: 500,  messages: [] },
+  'sp-5bb3f71a-572f-45a5-acc4-ece3ef851d24': { count: 0, limit: 200,  messages: [] },
+};
+
 async function openaiAgentTest(messages, model = "gpt-4", temperature = 0.7) {
+  // Refresh the token if it's older than 10 minutes
   if (!tokenInfo.value || Date.now() - tokenInfo.timestamp > 600 * 1000) {
     const newToken = await getToken();
     if (newToken.error) {
@@ -57,12 +71,13 @@ async function openaiAgentTest(messages, model = "gpt-4", temperature = 0.7) {
       headers: {
         "Editor-Version": "vscode/1.83.0",
         "Authorization": `Bearer ${tokenInfo.value}`,
+        "api-key": process.env.OPENAI_API_KEY,
       },
       data: {
         messages,
         model,
         temperature,
-        role: "system",
+        role: "system", // You can replace "system" with the role you want
       },
       timeout: 130000
     });
@@ -71,7 +86,7 @@ async function openaiAgentTest(messages, model = "gpt-4", temperature = 0.7) {
       throw new Error("Response 404");
     }
 
-    return { choices: [{ message: { role: 'assistant', content: response.data.choices[0].message.content } }] };
+    return response.data.choices[0].message.content;
   } catch (error) {
     console.error(error);
     return { error: error.message };
@@ -80,10 +95,22 @@ async function openaiAgentTest(messages, model = "gpt-4", temperature = 0.7) {
 
 exports.handler = async function(event, context) {
   const data = JSON.parse(event.body);
+  const apiKey = event.headers['api-key'];
+
+  if (!apiKey || !apiKeys[apiKey]) {
+    return { statusCode: 403, body: 'Invalid API Key.' };
+  }
+
+  if (apiKeys[apiKey].count >= apiKeys[apiKey].limit) {
+    return { statusCode: 429, body: 'API Key usage limit exceeded.' };
+  }
 
   try {
     const { messages, model, temperature } = data;
-    const result = await openaiAgentTest(messages, model, temperature);
+    apiKeys[apiKey].messages.push(...messages);
+    const result = await openaiAgentTest(apiKeys[apiKey].messages, model, temperature);
+
+    apiKeys[apiKey].count++;
 
     if (result.error) {
       return { statusCode: 500, body: result.error };
