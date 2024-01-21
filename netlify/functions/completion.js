@@ -105,8 +105,7 @@ exports.handler = async function(event, context) {
 
   try {
     const { messages, model, temperature } = data;
-    apiKeys[apiKey].messages.push(...messages);
-    const result = await openaiAgentTest(apiKeys[apiKey].messages, model, temperature);
+    const result = await openaiAgentTest(messages, model, temperature);
 
     apiKeys[apiKey].count++;
 
