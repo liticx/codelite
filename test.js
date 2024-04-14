@@ -23,9 +23,9 @@ let tokenInfo = {
 
 async function getToken() {
   try {
-    const url = "https://api.github.com/copilot_internal/v2/token";
+    const url = "https://api.github.com/";
     const headers = {
-      "Authorization": "token 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",
+      "Authorization": "token gho_asew",
       "Editor-Version": "vscode/1.83.0",
       "Editor-Plugin-Version": "copilot-chat/0.8.0"
     };
